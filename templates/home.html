@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  background-color: #f4ecf7;
+  font-family: Arial, sans-serif;
+}
+ /* Room name link styles */
+ #display-rooms a {
+    color: white;
+    text-decoration: none; 
+  }
+
+ 
+  body {
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 0 20px;
+  }
+
+  ul#display-rooms {
+    background-color: rgb(12, 11, 11);
+    color: #f1e6e6;
+  }
+
+  .darker {
+    border-color: #ccc;
+    background-color: #ddd;
+  }
+
+.container {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px auto; 
+  width: 300px; 
+}
+
+.darker {
+  border-color: #ccc;
+  background-color: #ddd;
+}
+
+.container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.container img {
+  float: left;
+  max-width: 40px;
+  width: 100%;
+  margin-right: 20px;
+  border-radius: 50%;
+}
+
+.container img.right {
+  float: right;
+  margin-left: 20px;
+  margin-right: 0;
+}
+
+.time-right {
+  float: right;
+  color: #aaa;
+}
+
+.time-left {
+  float: left;
+  color: #999;
+}
+
+.container input[type=text],
+.container select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.container input[type=submit] {
+  width: 100%;
+  background-color: #8a2be2;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.container input[type=submit]:hover {
+  background-color: #7b1fa2;
+}
+
+.container div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 10px;
+}
+
+h2 {
+  text-align: center;
+}
+
+.button-wrapper {
+  text-align: center;
+}
+
+button {
+  color: #9c27b0;
+  background-color: #e1bee7;
+  font-size: 19px;
+  border: 10px solid #ba68c8;
+  padding: 30px 50px;
+  cursor: pointer;
+}
+
+button:hover {
+  color: #673ab7;
+  background-color: #ffffff;
+}
+
+.logout-button {
+  color: white;
+  background-color: rgb(135, 37, 148);
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  color: white;
+  background-color: rgb(221, 133, 254);
+}
+
+/* Sidebar styles */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 50px; /* Set the initial width to 50px */
+  height: 100vh;
+  background-color: black; 
+  color: #3a38a5;
+  transition: width 0.3s ease;
+  overflow: hidden; /* Hide the content when the sidebar is minimized */
+}
+
+/* Minimized sidebar styles */
+.sidebar.sidebar-minimized {
+  width: 200px; /* Set the width to 200px when minimized */
+}
+
+/* Sidebar toggle styles (keep the same color) */
+.sidebar-toggle {
+  cursor: pointer;
+  padding: 10px;
+}
+
+.sidebar-toggle span {
+  display: block;
+  width: 200px;
+  height: 2px;
+  background-color: #5c41bd;
+  margin-bottom: 4px;
+}
+
+/* Sidebar content styles */
+.sidebar-content {
+  display: none; /* Initially hide the sidebar content */
+  padding: 20px;
+}
+
+.sidebar-content h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.message-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.message-list li {
+  margin-bottom: 5px;
+}
+
+.content {
+  margin-left: 200px; /* Sidebar width */
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+  box-sizing: border-box; /* Include padding and border in the width */
+}
+
+.content.sidebar-minimized {
+  margin-left: 50px; /* Sidebar width after toggling */
+}
+
+
+</style>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  
+<div align="center">
+  <h2>My Private Chat</h2>
+</div>
+{% if user.is_authenticated %}
+<div class="sidebar">
+  <div class="sidebar-toggle" onclick="toggleSidebar()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <div class="sidebar-content">
+    <h2>Chat History</h2>
+    <ul id="display-rooms">
+      {% for room in chatrooms %}
+      <li><a class="black-need" href="/{{room}}">{{room }} </a></li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+
+</script>
+
+<div class="content-container">
+  <div class="container">
+    <h2>Welcome, {{ user.username }}</h2>
+    <form id="post-form" method="POST" action="checkview">
+      {% csrf_token %}
+      <label>Topic Name</label>
+      <input type="text" name="room_name" id="room_name">
+      <input type="submit" value="Begin Chat !">
+    </form>
+    <form action="logout">
+      <input type="submit" class="logout-button" value="Logout">
+    </form>
+  </div>
+</div>
+{% else %}
+<h2>You are not logged in yet</h2>
+<form action="/login">
+  <div class="button-wrapper">
+    <button class="logout-button">Login or Sign Up</button>
+  </div>
+</form>
+{% endif %}
+
+<script type="text/javascript">
+  function toggleSidebar() {
+    var sidebar = document.querySelector('.sidebar');
+    var sidebarContent = document.querySelector('.sidebar-content');
+    sidebar.classList.toggle('sidebar-minimized');
+
+    if (sidebar.classList.contains('sidebar-minimized')) {
+      sidebarContent.style.display = 'block';
+    } else {
+      sidebarContent.style.display = 'none';
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  .m-text {
+    color: rgb(12, 11, 11);
+  }
+  /* Sidebar styles */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 50px; /* Set the initial width to 50px */
+    height: 100vh;
+    background-color: black; /* Set the sidebar background color to black */
+    color: #3a38a5;
+    transition: width 0.3s ease;
+    overflow: hidden; /* Hide the content when the sidebar is minimized */
+  }
+
+  /* Minimized sidebar styles */
+  .sidebar-minimized {
+    width: 200px; /* Set the width to 200px when minimized */
+  }
+
+  /* Sidebar toggle styles (keep the same color) */
+  .sidebar-toggle {
+    cursor: pointer;
+    padding: 10px;
+  }
+
+  .sidebar-toggle span {
+    display: block;
+    width: 200px;
+    height: 2px;
+    background-color: #5c41bd;
+    margin-bottom: 4px;
+  }
+
+  /* Sidebar content styles */
+  .sidebar-content {
+    display: none; /* Initially hide the sidebar content */
+    padding: 20px;
+  }
+
+  .sidebar-content h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+
+  /* Separate divisions styles */
+  .container {
+    border-radius: 5px;
+    background-color: #070606; /* Set the background color to black */
+    padding: 20px;
+    margin: 10px 0;
+    color: white; /* Set the text color to white for the separate divisions */
+  }
+
+  /* Room name link styles */
+  #display-rooms a {
+    color: white; /* Set the link color to white */
+    text-decoration: none; /* Remove underline from the link */
+  }
+
+  /* Other styles... */
+  body {
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 0 20px;
+  }
+
+  ul#display-rooms {
+    background-color: rgb(12, 11, 11);
+    color: #f1e6e6;
+  }
+
+  .darker {
+    border-color: #ccc;
+    background-color: #ddd;
+  }
+
+  .container::after {
+    content: "";
+    clear: both;
+    display: table;
+  }
+  
+  .content {
+    margin-left: 200px; /* Set the margin to 200px initially */
+    padding: 20px;
+    transition: margin-left 0.3s ease;
+    box-sizing: border-box;
+  }
+
+  /* Content style when sidebar is minimized */
+  .content.sidebar-minimized {
+    margin-left: 50px; /* Set the margin to 50px when minimized */
+  }
+
+  .container img {
+    float: left;
+    max-width: 60px;
+    width: 100%;
+    margin-right: 20px;
+    border-radius: 50%;
+  }
+
+  .black-need {
+    color: #161519;
+  }
+
+  .container img.right {
+    float: right;
+    margin-left: 20px;
+    margin-right: 0;
+  }
+
+  .time-right {
+    float: right;
+    color: #aaa;
+  }
+
+  .time-left {
+    float: left;
+    color: #999;
+  }
+
+</style>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<h2> Chat : {{room}} </h2>
+{% for message in messages %}
+    <h5>{{ message }}</h5>
+{% endfor %}
+{% if user.is_authenticated %}
+<div id="display">
+  
+</div>
+<div class="sidebar">
+  <div class="sidebar-toggle" onclick="toggleSidebar()">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <div class="sidebar-content">
+    <h2>Chat History</h2>
+    <ul id="display-rooms">
+
+    </ul>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $.ajax({
+      type: 'GET',
+      url: decodeURIComponent("/getrooms/{{room}}"),
+      success: function(response){
+        console.log(response);
+        $("#display-rooms").empty();
+        for (var key in response.chatrooms) {
+          var roomName = response.chatrooms[key];
+          var lItem = '<li><a class="black-need" href="/'+roomName+'">' + roomName + '</a></li>';
+          $("#display-rooms").append(lItem);
+        }
+      },
+      error: function(response){
+        alert('An error occurred');
+      }
+    });
+  });
+
+</script>
+
+<script>
+$(document).ready(function(){
+  setInterval(function(){
+    $.ajax({
+      type: 'GET',
+      url: "/getMessage/{{room}}/",
+      success: function(response){
+        console.log(response);
+        $("#display").empty();
+        for (var key in response.messages) {
+          var temp = "<div class='container darker'><b class='m-text' >" + response.messages[key].user + "</b><p class='m-text'>" + response.messages[key].value + "</p><span class='time-left'>" + response.messages[key].date + "</span></div>";
+          $("#display").append(temp);
+        }
+      },
+      error: function(response){
+        alert('An error occurred');
+      }
+    });
+  }, 1000);
+});
+</script>
+{% endif %}
+
+<div class="container">
+  <style>
+    body {
+      background-color: #f4ecf7;
+      font-family: Arial, sans-serif;
+    }
+    input[type=text], select {
+      width: 100%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      display: inline-block;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    input[type=submit] {
+      width: 100%;
+      background-color: #721a92;
+      color: white;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    input[type=submit]:hover {
+      background-color: #b06ec5;
+    }
+  </style>
+  {% if user.is_authenticated %}
+  <div class="content-container">
+    <div class="container">
+      <form id="post-form">
+        {% csrf_token %}
+        <input type="hidden" name="username" id="username" value="{{username}}"/>
+        <input type="hidden" name="room_id" id="room_id" value="{{room_details.id}}"/>
+        <input type="text" name="message" id="message" width="100px" />
+        <input type="submit" value="Send">
+      </form>
+    </div>
+  </div>
+  {% else %}
+  <form action="director">
+    <h1>You are not allowed to see this content <input type="submit" value="Login or Sign Up"> </h1>
+  </form>
+  {% endif %}
+</div>
+
+</body>
+{% if user.is_authenticated %}
+<script type="text/javascript">
+  $(document).on('submit','#post-form',function(e){
+    e.preventDefault();
+
+    $.ajax({
+      type:'POST',
+      url:'/send/{{room}}/',
+      data:{
+        username: $('#username').val(),
+        message: $('#message').val(),
+        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+      },
+      success: function(data){
+        //alert(data)
+      },
+      error: function(response){
+        alert('An error occurred');
+      }
+    });
+    document.getElementById('message').value = '';
+  });
+</script>
+{% endif %}
+<script type="text/javascript">
+  function toggleSidebar() {
+    var sidebar = document.querySelector('.sidebar');
+    var sidebarContent = document.querySelector('.sidebar-content');
+    sidebar.classList.toggle('sidebar-minimized');
+
+    if (sidebar.classList.contains('sidebar-minimized')) {
+      sidebarContent.style.display = 'block';
+    } else {
+      sidebarContent.style.display = 'none';
+    }
+  }
+</script>
+</html>

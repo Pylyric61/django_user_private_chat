@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <style>
+    body {
+      background-color: #f4ecf7;
+      font-family: Arial, sans-serif;
+    }
+
+    h1 {
+      color: blueviolet;
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    h3 {
+      color: blueviolet;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 2rem;
+    }
+
+    p {
+      text-align: center;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 200px;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border: 1px solid gray;
+      border-radius: 0.25rem;
+    }
+
+    input[type="submit"] {
+      width: 100px;
+      padding: 0.5rem;
+      margin-top: 1rem;
+      background-color: blueviolet;
+      color: white;
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: darkblue;
+    }
+
+    .button-wrapper {
+      text-align: center;
+    }
+
+    button {
+      color: #9c27b0;
+      background-color: #e1bee7;
+      font-size: 19px;
+      border: 10px solid #ba68c8;
+      padding: 30px 50px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      color: #673ab7;
+      background-color: #ffffff;
+    }
+  </style>
+</head>
+
+<body>
+  <div align="center">
+    <h2>My Private Chat</h2>
+</div>
+  {% for message in messages %}
+  <h3>{{ message }}</h3>
+  {% endfor %}
+  <h1>Login Now</h1>
+
+  
+
+  <form action="login" method="post">
+    {% csrf_token %}
+    <p>Username:</p>
+    <input type="text" name="username">
+    <p>Password:</p>
+    <input type="password" name="password"><br>
+    <input text="Submit" type="submit">
+  </form>
+  <form action="/register">
+    <div class="button-wrapper">
+       If you are not registered yet, please <a href="register"> sign up </a>
+    </div>
+  </form>
+</body>
+
+</html>
